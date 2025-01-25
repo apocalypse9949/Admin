@@ -4,6 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart2, Users, Dumbbell, Apple, Activity, Target, Clock, Zap } from "lucide-react"
 import AdminLayout from "@/components/layout/admin-layout"
 import { DataTable } from "@/components/ui/data-table"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
+import { Menu } from "lucide-react"
+import { useState } from "react"
 
 // Analytics Card Component
 function AnalyticsCard({
@@ -104,6 +108,33 @@ function PerformanceMetrics() {
         <DataTable columns={columns} data={metrics} searchable={false} />
       </CardContent>
     </Card>
+  )
+}
+
+export function MobileNav({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      {/* Mobile Navigation */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Menu className="h-4 w-4" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[80%] max-w-[300px] p-0">
+            {children}
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Navigation */}
+      <div className="hidden lg:block">
+        {children}
+      </div>
+    </>
   )
 }
 

@@ -1,22 +1,65 @@
 "use client"
 
-import { useState,useEffect} from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table"
 import { Plus } from "lucide-react"
 import AdminLayout from "@/components/layout/admin-layout"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import axios from 'axios'
+
 const columns = [
-  { key: "_id", title: "User ID", sortable: true },
-  { key: "name", title: "Name", sortable: true },
-  { key: "email", title: "Email", sortable: true },
-  { key: "age", title: "Age", sortable: true },
-  { key: "weight", title: "Weight", sortable: true },
-  { key: "height", title: "Height (cm)", sortable: true },
-  { key: "activityLevel", title: "Activity Level", sortable: true },
-  { key: "medicalHistory", title: "Medical History" },
-  { key: "fitnessGoals", title: "Fitness Goals" },
-  
+  { 
+    key: "_id", 
+    title: "User ID", 
+    sortable: true,
+    className: "hidden md:table-cell" // Hide on mobile
+  },
+  { 
+    key: "name", 
+    title: "Name", 
+    sortable: true 
+  },
+  { 
+    key: "email", 
+    title: "Email", 
+    sortable: true,
+    className: "hidden sm:table-cell" // Hide on small mobile
+  },
+  { 
+    key: "age", 
+    title: "Age", 
+    sortable: true,
+    className: "hidden sm:table-cell"
+  },
+  { 
+    key: "weight", 
+    title: "Weight", 
+    sortable: true,
+    className: "hidden lg:table-cell"
+  },
+  { 
+    key: "height", 
+    title: "Height (cm)", 
+    sortable: true,
+    className: "hidden lg:table-cell"
+  },
+  { 
+    key: "activityLevel", 
+    title: "Activity Level", 
+    sortable: true,
+    className: "hidden xl:table-cell"
+  },
+  { 
+    key: "medicalHistory", 
+    title: "Medical History",
+    className: "hidden xl:table-cell"
+  },
+  { 
+    key: "fitnessGoals", 
+    title: "Fitness Goals",
+    className: "hidden xl:table-cell"
+  }
 ]
 
 const mockUsers = [
@@ -50,29 +93,36 @@ export default function UsersPage() {
   }
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
-        
-        const respo = await axios.get("https://hms-da9g.onrender.com/getAllUsers"); // Add your actual API URL here
+        const respo = await axios.get("https://hms-da9g.onrender.com/getAllUsers")
         setUsers(respo.data)
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error)
       }
-    };
+    }
     fetchData()
-  })
+  }, []) // Added dependency array to prevent infinite loop
+
   return (
     <AdminLayout>
-      <div className="space-y-4">
+      <div className="space-y-4 p-4 sm:p-6 lg:p-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">User List</h2>
-          <Button>
+          <h2 className="text-xl sm:text-2xl font-bold">User List</h2>
+          <Button size="sm" className="whitespace-nowrap">
             <Plus className="w-4 h-4 mr-2" />
             Add User
           </Button>
         </div>
-        <DataTable columns={columns} data={users}  />
+        <ScrollArea className="rounded-md border">
+          <div className="h-[calc(100vh-12rem)]">
+            <DataTable 
+              columns={columns} 
+              data={users} 
+              className="w-full"
+            />
+          </div>
+        </ScrollArea>
       </div>
     </AdminLayout>
   )

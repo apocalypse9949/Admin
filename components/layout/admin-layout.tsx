@@ -14,6 +14,7 @@ import {
   BookOpen,
   ShoppingCart,
   LayoutDashboard,
+  Menu,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -71,19 +72,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname()
   const [openMenus, setOpenMenus] = useState<string[]>([])
   const [users,setusers] = useState([])
-
-  
-
-
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false)
 
   const toggleSubmenu = (title: string) => {
     setOpenMenus((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 bg-background border-r flex flex-col">
+    <div className="min-h-screen">
+      {/* Mobile Menu Button - Only visible on mobile */}
+      <Button 
+        variant="ghost"
+        className="md:hidden fixed top-4 left-4 z-50"
+        onClick={() => setShowMobileSidebar(!showMobileSidebar)}
+      >
+        <Menu className="h-6 w-6" />
+      </Button>
+
+      {/* Sidebar - Changes position based on screen size */}
+      <div className={`
+        fixed inset-y-0 left-0 z-40
+        transform transition-transform duration-200 ease-in-out
+        w-64 bg-background border-r
+        md:relative md:translate-x-0
+        ${showMobileSidebar ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="p-6 border-b">
           <Link href="/admin/dashboard" className="flex items-center gap-2">
             <img
@@ -147,10 +160,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ))}
           </ul>
         </nav>
-      </aside>
+      </div>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-muted/20">
+      {/* Main Content - Adjusts margin based on sidebar visibility */}
+      <main className={`
+        transition-margin duration-200 ease-in-out
+        md:ml-64
+      `}>
         <header className="h-16 border-b bg-background flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold">Admin Dashboard</h1>
           <div className="flex items-center gap-4">
@@ -166,6 +182,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
         <div className="p-6">{children}</div>
       </main>
+
+      {/* Overlay for mobile - Only visible when sidebar is open */}
+      {showMobileSidebar && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setShowMobileSidebar(false)}
+        />
+      )}
     </div>
   )
 }
